@@ -1,6 +1,6 @@
 # Facilities for testing Tk applications.
 #
-# $Revision: 1.1 $
+# $Revision: 1.2 $
 
 package require Tk
 package provide TkTest 0.1
@@ -157,18 +157,21 @@ proc tktest::client::press {name {pos {}}} {
 
 # Find coordinates for a widget
 proc tktest::client::coord {w args} {
+    set x [expr {[winfo rootx $w] - [winfo rootx [winfo toplevel $w]]}]
+    set y [expr {[winfo rooty $w] - [winfo rooty [winfo toplevel $w]]}]
+    set width [winfo width $w]
+    set height [winfo height $w]
+
     if {[llength $args] > 0} {
         set bbox [eval \$w $args]
         if {[llength $bbox] == 2} {
             return $bbox
         }
-        foreach {x y width height} $bbox break
-    } else {
-        set x [expr {[winfo rootx $w] - [winfo rootx [winfo toplevel $w]]}]
-        set y [expr {[winfo rooty $w] - [winfo rooty [winfo toplevel $w]]}]
-        set width [winfo width $w]
-        set height [winfo height $w]
+        foreach {rx ry width height} $bbox break
+        incr x $rx
+        incr y $ry
     }
+
     set mx [expr {$x + $width / 2}]
     set my [expr {$y + $height / 2}]
     return [list $mx $my]
@@ -182,6 +185,7 @@ proc tktest::client::menu {args} {
     } else {
         set menu [$top cget -menu]
     }
+
     set notlast [llength $args]
     foreach arg $args {
         incr notlast -1
@@ -218,9 +222,12 @@ proc tktest::client::mouse {but x {y {}}} {
     set rootx [expr {[winfo rootx $top] + $x}]
     set rooty [expr {[winfo rooty $top] + $y}]
     set w [winfo containing $rootx $rooty]
+    
+    set wx [expr {$rootx - [winfo rootx $w]}]
+    set wy [expr {$rooty - [winfo rooty $w]}]
 
-    event generate $w <ButtonPress-$but> -x $x -y $y -rootx $rootx -rooty $rooty
-    event generate $w <ButtonRelease-$but> -x $x -y $y
+    event generate $w <ButtonPress-$but> -x $wx -y $wy -rootx $rootx -rooty $rooty
+    event generate $w <ButtonRelease-$but> -x $wx -y $wy -rootx $rootx -rooty $rooty
 }
 
 # Mouse click on a coordinate
