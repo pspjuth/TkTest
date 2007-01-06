@@ -1,4 +1,4 @@
-#!/bin/env tclsh
+#!/usr/bin/env tclsh
 #
 # Simple GUI application to run tests on
 #
