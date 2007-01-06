@@ -1,7 +1,7 @@
 #------------------------------------------------------------*- tcl -*-
 # Tests for TkTest                             
 #----------------------------------------------------------------------
-# $Revision: 1.2 $
+# $Revision: 1.3 $
 #----------------------------------------------------------------------
 
 package require TkTest
@@ -14,27 +14,27 @@ test tktest-1.1 widget -body {
     tktest::widget -class Button
 } -returnCodes 1 -result * -match glob
 
-test tktest-1.1 widget -body {
+test tktest-1.2 widget -body {
     tktest::widget -class Button -text C*
 } -result .b3
 
-test tktest-1.1 widget -body {
+test tktest-1.3 widget -body {
     tktest::widget -class Button -pos 1
 } -result .b2
 
-test tktest-1.1 widget -body {
+test tktest-1.4 widget -body {
     tktest::widget -class Button -pos 2
 } -result .b3
 
-test tktest-1.1 widget -body {
+test tktest-1.5 widget -body {
     tktest::widget -class Button -pos 3
 } -result .b4
 
-test tktest-1.1 widget -body {
+test tktest-1.6 widget -body {
     tktest::widget -class C* -text *2
 } -result .b6
 
-test tktest-1.1 widget -body {
+test tktest-1.7 widget -body {
     tktest::widget -class Label -pos 0
 } -result .l1
 
@@ -58,11 +58,12 @@ test tktest-4.1 coord -body {
     tktest::coord [tktest::widget -class ListBox]
 } -result "50 100"
 
-test tktest-4.1 coord -body {
+test tktest-4.2 coord -body {
     set r1 [tktest::coord [tktest::widget -class ListBox] bbox 2]
     set r2 [tktest::coord [tktest::widget -class ListBox] bbox 3]
     foreach {x1 y1} $r1 break
     foreach {x2 y2} $r2 break
+    # Skip absolute check, just sanity check coordinates
     if {$x1 != $x2 || $y1 >= $y2} {
         list $r1 $r2
     } else {
