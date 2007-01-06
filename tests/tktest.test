@@ -1,0 +1,110 @@
+
+package require tcltest
+namespace import tcltest::test
+wm withdraw .
+exec guitesttest.tcl &
+after 1000
+tktest::init TkTestTest
+
+test tktest-1.1 widget -body {
+    tktest::widget -class Button
+} -returnCodes 1 -result * -match glob
+
+test tktest-1.1 widget -body {
+    tktest::widget -class Button -text C*
+} -result .b3
+
+test tktest-1.1 widget -body {
+    tktest::widget -class Button -pos 1
+} -result .b2
+
+test tktest-1.1 widget -body {
+    tktest::widget -class Button -pos 2
+} -result .b3
+
+test tktest-1.1 widget -body {
+    tktest::widget -class Button -pos 3
+} -result .b4
+
+test tktest-1.1 widget -body {
+    tktest::widget -class C* -text *2
+} -result .b6
+
+test tktest-1.1 widget -body {
+    tktest::widget -class Label -pos 0
+} -result .l1
+
+test tktest-2.1 press -body {
+    set res ""
+    tktest::press Apa
+    lappend res [tktest::widget -class Label -pos 0 -eval "cget -text"]
+    tktest::press Bepa
+    lappend res [tktest::widget -class Label -pos 0 -eval "cget -text"]
+} -result "Apa Bepa"
+
+test tktest-3.1 menu -body {
+    set res ""
+    tktest::menu Edit Copy
+    lappend res [tktest::widget -class Label -pos 0 -eval "cget -text"]
+    tktest::menu Edit Paste
+    lappend res [tktest::widget -class Label -pos 0 -eval "cget -text"]
+} -result "Copy Paste"
+
+test tktest-4.1 coord -body {
+    tktest::coord [tktest::widget -class ListBox]
+} -result "50 100"
+
+test tktest-4.1 coord -body {
+    set r1 [tktest::coord [tktest::widget -class ListBox] bbox 2]
+    set r2 [tktest::coord [tktest::widget -class ListBox] bbox 3]
+    foreach {x1 y1} $r1 break
+    foreach {x2 y2} $r2 break
+    if {$x1 != $x2 || $y1 >= $y2} {
+        list $r1 $r2
+    } else {
+        set res 0
+    }
+} -result 0
+
+test tktest-5.1 mouse -body {
+    set lb [tktest::widget -class ListBox]
+    set res {}
+    tktest::mouse left [tktest::coord $lb bbox 1]
+    lappend res [tktest::cmd $lb curselection]
+    tktest::mouse left [tktest::coord $lb bbox 3]
+    lappend res [tktest::cmd $lb curselection]
+} -result {1 3}
+
+test tktest-5.2 mouse -body {
+    set w [tktest::widget -class Label -pos 1]
+    set res {}
+    tktest::menu Edit Copy
+    lappend res [tktest::widget -class Label -pos 0 -eval "cget -text"]
+
+    tktest::mouse right [tktest::coord $w]
+    set w2 [tktest::widget -class Menu -pos 1]
+    tktest::menu Miffo
+    tktest::key Escape
+    lappend res [tktest::widget -class Label -pos 0 -eval "cget -text"]
+} -result {Copy Miffo}
+
+test tktest-6.1 key -body {
+    set w [tktest::widget -class Entry]
+    set res {}
+    tktest::menu Edit Copy
+    lappend res [tktest::widget -class Label -pos 0 -eval "cget -text"]
+    lappend res [tktest::cmd $w get]
+
+    tktest::cmd focus $w
+    tktest::key End
+    tktest::key A
+    lappend res [tktest::widget -class Label -pos 0 -eval "cget -text"]
+
+    tktest::key Home Shift
+    tktest::key B
+    lappend res [tktest::widget -class Label -pos 0 -eval "cget -text"]
+
+} -result {Copy Copy CopyA B}
+
+send -async TkTestTest exit
+exit
