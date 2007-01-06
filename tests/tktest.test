@@ -1,8 +1,12 @@
+#------------------------------------------------------------*- tcl -*-
+# Tests for TkTest                             
+#----------------------------------------------------------------------
+# $Revision: 1.2 $
+#----------------------------------------------------------------------
 
-package require tcltest
-namespace import tcltest::test
-wm withdraw .
-exec guitesttest.tcl &
+package require TkTest
+#wm withdraw .
+exec tests/tktesttest.tcl &
 after 1000
 tktest::init TkTestTest
 
@@ -107,4 +111,3 @@ test tktest-6.1 key -body {
 } -result {Copy Copy CopyA B}
 
 send -async TkTestTest exit
-exit
