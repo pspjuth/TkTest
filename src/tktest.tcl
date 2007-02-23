@@ -1,6 +1,6 @@
 # Facilities for testing Tk applications.
 #
-# $Revision: 1.2 $
+# $Revision: 1.3 $
 
 package require Tk
 package provide TkTest 0.1
@@ -230,7 +230,7 @@ proc tktest::client::mouse {but x {y {}}} {
     event generate $w <ButtonRelease-$but> -x $wx -y $wy -rootx $rootx -rooty $rooty
 }
 
-# Mouse click on a coordinate
+# Send a key event
 proc tktest::client::key {sym {mod {}}} {
     set top [CurrentTop]
 
@@ -241,11 +241,24 @@ proc tktest::client::key {sym {mod {}}} {
     }
 }
 
+# Send a string as key events
+proc tktest::client::keys {string} {
+    set top [CurrentTop]
+    foreach char [split $string ""] {
+        # TODO: what set of chars does this work for?
+        event generate $top <Key-$char>
+    }
+}
+
 # Create local procs that mirror client procs
 foreach p [info procs tktest::client::*] {
     set tail [namespace tail $p]
     proc tktest::$tail {args} [string map "%tail% $tail" {
         variable client
-        send -- $client tktest::client::%tail% $args
+        if {[lindex $args 0] eq "-async"} {
+            send -async -- $client tktest::client::%tail% [lrange $args 1 end]
+        } else {
+            send -- $client tktest::client::%tail% $args
+        }
     }]
 }
