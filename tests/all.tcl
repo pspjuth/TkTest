@@ -1,6 +1,6 @@
 #!/bin/sh
 #----------------------------------------------------------------------
-# $Revision: 1.1 $
+# $Revision: 1.2 $
 #----------------------------------------------------------------------
 # the next line restarts using tclsh \
 exec tclsh "$0" "$@"
@@ -11,7 +11,7 @@ set thisDir    [file dirname $thisScript]
 package require tcltest
 namespace import tcltest::*
 tcltest::configure -verbose "body error" -singleproc 1
-lappend ::auto_path [file join $thisDir]/../src
+lappend ::auto_path [file join $thisDir]/..
 package require TkTest
 
 if {$argc > 0} {
