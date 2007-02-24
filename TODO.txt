@@ -1,0 +1,7 @@
+Extend -pos to handle keywords like "left", "nw", "se".
+
+More shortcuts for common operations.
+Like context menu at a coordinate:
+  tktest::mouse right $c
+  tktest::menu "Delete"
+  tktest::key Escape
