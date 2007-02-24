@@ -1,0 +1,108 @@
+[comment {-*- tcl -*- doctools manpage}]
+[manpage_begin tktest n 0.1]
+[copyright {2007 Peter Spjuth}]
+[moddesc   {Test Tcl/Tk applications}]
+[titledesc {Test Tcl/Tk applications}]
+[require Tcl 8.4]
+[require tktest [opt 0.1]]
+[description]
+
+This package provides helpers for testing Tcl/Tk GUIs.
+The mechanism for testing is the [cmd send] command, so the environment
+and the application to be tested must allow [cmd send].
+
+[section {PUBLIC API}]
+[subsection {PACKAGE COMMANDS}]
+
+[list_begin definitions]
+
+[call [cmd ::tktest::init] [arg appName]]
+
+This command initializes the tktest package to test an application.
+[nl]
+The [arg appName] must identify the application to be tested in a way
+that works with [cmd send].
+[nl]
+If the application is restarted, [cmd ::tktest::init] must be called
+again to redo the initializatons needed in the application.
+After [cmd ::tktest::init] has been called, all other commands
+will go to that application.
+
+[call [cmd ::tktest::widget] [opt [arg "option value"]...]]
+
+Locate a widget in the application.
+
+[list_begin opt]
+
+[opt_def -class [arg pattern]]
+
+The widget's class must match [arg pattern].
+
+[opt_def -text [arg pattern]]
+
+The widget's text or label must match [arg pattern].
+
+[opt_def -pos [arg number]]
+
+If more than one widget is eligible, they are numbered left-right top-down.
+A number must then be given to identify which is meant.
+
+[opt_def -eval [arg tail]]
+
+If [option -eval] is given, a command is evaluated on the widget and the
+result is returned instead of the widget name. The command evaluated
+is uplevel #0 $widget $tail.
+
+[list_end]
+
+[call [cmd ::tktest::cmd] [arg "command"] [opt [arg "arg"]...]]
+
+Execute a command within the client.
+
+[call [cmd ::tktest::press] [arg "text"] [opt [arg "pos"]]]
+
+Press a button.  The button is identified by [arg "text"] and [arg "pos"],
+which are equivalent to [cmd ::tktest::widget]'s [option "-text"] and
+[option "-pos"].
+Any widget with an invoke command can be used.
+
+[call [cmd ::tktest::coord] [arg "widget"] [arg "command"] [opt [arg "arg"]...]]
+Find coordinates for a widget. Returns 
+If no extra arguments are given, the center of the widget is returned as a list of x/y, relative to the widget's toplevel.
+Any extra arguments are called as a subcommand on the widget
+to ask for a coordinate or bounding box.
+A coordinate is returned as is.  A bounding box is assumed to be relative to
+the widget and the center of the box is returned, relative to the widget's toplevel.
+
+[call [cmd ::tktest::menu] [opt [arg "pattern"]...]]
+Invoke a menu.
+Each argument is a glob pattern describing a menu element's label.
+All entries but the last should be cascades.
+
+[call [cmd ::tktest::mouse] [arg button] [arg x] [opt [arg y]]]
+
+Mouse click at a coordinate.
+The mouse button is selected by [arg button] which is either a number, "left"
+or "right". If [arg y] is not given, [arg x] may be a two element list.
+Coordinates are relative to current toplevel.
+
+[call [cmd ::tktest::key] [arg symbol] [opt [arg modifier]]]
+
+Generate a key event.
+
+[call [cmd ::tktest::keys] [arg string]]
+
+Generate a series of key events, one for each char in [arg string].
+
+[list_end]
+
+[section EXAMPLES]
+[example_begin]
+  tktest::init MyApp
+  tktest::press Run
+  tktest::menu File Exit
+[example_end]
+
+[see_also doctools]
+[keywords gui testing]
+[manpage_end]
