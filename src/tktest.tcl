@@ -6,7 +6,7 @@
 #  for the Tcl core code.
 #
 #----------------------------------------------------------------------
-# $Revision: 1.4 $
+# $Revision: 1.5 $
 #----------------------------------------------------------------------
 
 package require Tk
@@ -180,8 +180,7 @@ proc tktest::client::cmd {args} {
 # Press a button
 #-----------------------------------------------------------------------------
 proc tktest::client::press {name {pos {}}} {
-    set w [widget -text $name -pos $pos]
-    $w invoke
+    widget -text $name -pos $pos -eval invoke
 }
 
 #-----------------------------------------------------------------------------
