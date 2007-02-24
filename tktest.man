@@ -103,10 +103,13 @@ Generate a series of key events, one for each char in [arg string].
   tktest::press Run
   # Select Menu entry "Exit" in menu "File"
   tktest::menu File Exit
-  # Right click mouse over the listbox's second element
+  # Right click mouse over the listbox's second element and select
+  # the Delete entry from the popup menu.
   set w [lb]tktest::widget -class Listbox[rb]
   set c [lb]tktest::coord $w bbox 1[rb]
   tktest::mouse right $c
+  tktest::menu "Delete"
+  tktest::key Escape
   # Read the text from the first Label in the window
   set t [lb]tktest::widget -class Label -pos 0 -eval "cget -text"[rb]
   # Type an A at the end of the entry
