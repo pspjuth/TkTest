@@ -3,16 +3,16 @@
 [copyright {2007 Peter Spjuth}]
 [moddesc   {Test Tcl/Tk applications}]
 [titledesc {Test Tcl/Tk applications}]
-[require Tcl 8.4]
+[require Tk]
 [require tktest [opt 0.1]]
 [description]
 
 This package provides helpers for testing Tcl/Tk GUIs.
+[para]
 The mechanism for testing is the [cmd send] command, so the environment
 and the application to be tested must allow [cmd send].
 
 [section {PUBLIC API}]
-[subsection {PACKAGE COMMANDS}]
 
 [list_begin definitions]
 
@@ -51,7 +51,7 @@ A number must then be given to identify which is meant.
 
 If [option -eval] is given, a command is evaluated on the widget and the
 result is returned instead of the widget name. The command evaluated
-is uplevel #0 $widget $tail.
+is [lb]uplevel e#0 $widget $tail[rb].
 
 [list_end]
 
@@ -66,8 +66,8 @@ which are equivalent to [cmd ::tktest::widget]'s [option "-text"] and
 [option "-pos"].
 Any widget with an invoke command can be used.
 
-[call [cmd ::tktest::coord] [arg "widget"] [arg "command"] [opt [arg "arg"]...]]
-Find coordinates for a widget. Returns 
+[call [cmd ::tktest::coord] [arg "widget"] [opt "[arg "command"] [arg "arg"]..."]]
+Find coordinates for a widget.
 If no extra arguments are given, the center of the widget is returned as a list of x/y, relative to the widget's toplevel.
 Any extra arguments are called as a subcommand on the widget
 to ask for a coordinate or bounding box.
@@ -99,10 +99,23 @@ Generate a series of key events, one for each char in [arg string].
 [section EXAMPLES]
 [example_begin]
   tktest::init MyApp
+  # Press button labeled "Run"
   tktest::press Run
+  # Select Menu entry "Exit" in menu "File"
   tktest::menu File Exit
+  # Right click mouse over the listbox's second element
+  set w [lb]tktest::widget -class Listbox[rb]
+  set c [lb]tktest::coord $w bbox 1[rb]
+  tktest::mouse right $c
+  # Read the text from the first Label in the window
+  set t [lb]tktest::widget -class Label -pos 0 -eval "cget -text"[rb]
+  # Type an A at the end of the entry
+  tktest::cmd focus [lb]tktest::widget -class Entry[rb]
+  tktest::key End
+  tktest::key A
+
 [example_end]
 
-[see_also doctools]
+[see_also tcltest]
 [keywords gui testing]
 [manpage_end]
