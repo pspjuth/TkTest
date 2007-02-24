@@ -1,16 +1,26 @@
 # Facilities for testing Tk applications.
 #
-# $Revision: 1.3 $
+#  Copyright (c) 2007, Peter Spjuth  (peter.spjuth@space.se)
+#
+#  Permission is granted to use this code under the same terms as
+#  for the Tcl core code.
+#
+#----------------------------------------------------------------------
+# $Revision: 1.4 $
+#----------------------------------------------------------------------
 
 package require Tk
 package provide TkTest 0.1
 
 namespace eval tktest {
     namespace eval client {}
+    variable client
 }
 
+#-----------------------------------------------------------------------------
 # Initialise tktest for an application.
 # Argument is a string indentifying tested application for send
+#-----------------------------------------------------------------------------
 proc tktest::init {str} {
     variable client
 
@@ -30,6 +40,16 @@ proc tktest::init {str} {
         send -- $client [list proc $p $arglist [info body $p]]
     }
 }
+
+#-----------------------------------------------------------------------------
+# Client Procedures
+#
+# Each tktest::client::xxx procedure will be copied to the application under
+# test and thus executes in the applications interpreter.
+#
+# A portal to each is created as tktest::xxx, and is used within test
+# sequences.
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Helper to parse arguments to a procedure.
@@ -63,7 +83,9 @@ proc tktest::client::ParseArgs {arrName arglist} {
     }
 }
 
+#-----------------------------------------------------------------------------
 # Locate current toplevel
+#-----------------------------------------------------------------------------
 proc tktest::client::CurrentTop {} {
     set top [focus]
     if {![winfo exists $top]} {
@@ -72,7 +94,10 @@ proc tktest::client::CurrentTop {} {
     return [winfo toplevel $top]
 }
 
+#-----------------------------------------------------------------------------
 # Locate a widget
+# Return its name
+#-----------------------------------------------------------------------------
 proc tktest::client::widget {args} {
     set top [CurrentTop]
 
@@ -144,18 +169,27 @@ proc tktest::client::widget {args} {
     return $w
 }
 
+#-----------------------------------------------------------------------------
 # Run a command in client
+#-----------------------------------------------------------------------------
 proc tktest::client::cmd {args} {
     return [uplevel \#0 $args]
 }
 
+#-----------------------------------------------------------------------------
 # Press a button
+#-----------------------------------------------------------------------------
 proc tktest::client::press {name {pos {}}} {
     set w [widget -text $name -pos $pos]
     $w invoke
 }
 
+#-----------------------------------------------------------------------------
 # Find coordinates for a widget
+# Any extra arguments are called as a subcommand on the widget
+# to ask for a coord or bounding box.
+# Returns a list of x/y, relative to the widget's toplevel.
+#-----------------------------------------------------------------------------
 proc tktest::client::coord {w args} {
     set x [expr {[winfo rootx $w] - [winfo rootx [winfo toplevel $w]]}]
     set y [expr {[winfo rooty $w] - [winfo rooty [winfo toplevel $w]]}]
@@ -177,7 +211,11 @@ proc tktest::client::coord {w args} {
     return [list $mx $my]
 }
 
+#-----------------------------------------------------------------------------
 # Invoke a menu
+# Each argument is a glob pattern describing a menu element's label.
+# All entries but the last should be cascades.
+#-----------------------------------------------------------------------------
 proc tktest::client::menu {args} {
     set top [CurrentTop]
     if {[winfo class $top] eq "Menu"} {
@@ -208,7 +246,11 @@ proc tktest::client::menu {args} {
     }
 }
 
-# Mouse click on a coordinate
+#-----------------------------------------------------------------------------
+# Mouse click on a coordinate.
+# BUtton may be a number or left/right.
+# Coordinates can be either a list or two arguments.
+#-----------------------------------------------------------------------------
 proc tktest::client::mouse {but x {y {}}} {
     set top [CurrentTop]
     if {$but eq "left"} {
@@ -230,7 +272,9 @@ proc tktest::client::mouse {but x {y {}}} {
     event generate $w <ButtonRelease-$but> -x $wx -y $wy -rootx $rootx -rooty $rooty
 }
 
+#-----------------------------------------------------------------------------
 # Send a key event
+#-----------------------------------------------------------------------------
 proc tktest::client::key {sym {mod {}}} {
     set top [CurrentTop]
 
@@ -241,7 +285,9 @@ proc tktest::client::key {sym {mod {}}} {
     }
 }
 
+#-----------------------------------------------------------------------------
 # Send a string as key events
+#-----------------------------------------------------------------------------
 proc tktest::client::keys {string} {
     set top [CurrentTop]
     foreach char [split $string ""] {
@@ -250,9 +296,14 @@ proc tktest::client::keys {string} {
     }
 }
 
+#-----------------------------------------------------------------------------
+# Initialize mirroring procedures
 # Create local procs that mirror client procs
+#-----------------------------------------------------------------------------
+
 foreach p [info procs tktest::client::*] {
     set tail [namespace tail $p]
+    ##nagelfar ignore Non constant argument to proc
     proc tktest::$tail {args} [string map "%tail% $tail" {
         variable client
         if {[lindex $args 0] eq "-async"} {
