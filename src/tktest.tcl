@@ -6,11 +6,11 @@
 #  for the Tcl core code.
 #
 #----------------------------------------------------------------------
-# $Revision: 1.5 $
+# $Revision: 1.6 $
 #----------------------------------------------------------------------
 
 package require Tk
-package provide TkTest 0.1
+package provide TkTest 0.1.1
 
 namespace eval tktest {
     namespace eval client {}
@@ -115,6 +115,10 @@ proc tktest::client::widget {args} {
         set doing $todo
         set todo {}
         foreach w $doing {
+            # Exclude invisible windows
+            if {![winfo ismapped $w]} {
+                continue
+            }
             # Don't traverse to another toplevel
             if {[winfo toplevel $w] ne $w} {
                 # Add children
@@ -149,7 +153,8 @@ proc tktest::client::widget {args} {
         if {$argv(-pos) eq ""} {
             return -code error "Ambiguous widget '$candidates'"
         }
-        if {$argv(-pos) >= [llength $candidates]} {
+        # Check pos with lindex to allow end style indexing.
+        if {[lindex $candidates $argv(-pos)] eq ""} {
             return -code error "Position out of range"
         }
         # Sort on coordinates
@@ -291,6 +296,7 @@ proc tktest::client::keys {string} {
     set top [CurrentTop]
     foreach char [split $string ""] {
         # TODO: what set of chars does this work for?
+        set char [string map {" " space \n Return} $char]
         event generate $top <Key-$char>
     }
 }
