@@ -1,0 +1,6 @@
+2007-03-22  Peter Spjuth <pspjuth@users.sourceforge.net>
+
+	* src/tktest.tcl:
+	Do not include unmapped windows in widget search.
+	Allow end style index in -pos.
+	Handle space and newline in keys string.
