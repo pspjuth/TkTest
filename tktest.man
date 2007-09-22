@@ -1,5 +1,5 @@
 [comment {-*- tcl -*- doctools manpage}]
-[manpage_begin tktest n 0.1]
+[manpage_begin tktest n 0.1.1]
 [copyright {2007 Peter Spjuth}]
 [moddesc   {Test Tcl/Tk applications}]
 [titledesc {Test Tcl/Tk applications}]
@@ -11,6 +11,8 @@ This package provides helpers for testing Tcl/Tk GUIs.
 [para]
 The mechanism for testing is the [cmd send] command, so the environment
 and the application to be tested must allow [cmd send].
+All client commands take the optional argument [arg -async],
+which causes it to use the asynchronous version of [cmd send].
 
 [section {PUBLIC API}]
 
@@ -27,6 +29,12 @@ If the application is restarted, [cmd ::tktest::init] must be called
 again to redo the initializatons needed in the application.
 After [cmd ::tktest::init] has been called, all other commands
 will go to that application.
+
+[list_end]
+
+[subsection {Client commands}]
+
+[list_begin definitions]
 
 [call [cmd ::tktest::widget] [opt [arg "option value"]...]]
 
@@ -93,6 +101,22 @@ Generate a key event.
 [call [cmd ::tktest::keys] [arg string]]
 
 Generate a series of key events, one for each char in [arg string].
+Currently all alphanumeric chars, space and newline are supported.
+
+[list_end]
+
+[subsection {Helper commands}]
+
+[list_begin definitions]
+
+[call [cmd ::tktest::waitFocus] [arg cmd] [opt [arg "arg"]...]]
+Execute a client command and wait for a focus change in the application.
+This is used for buttons or menus that create a dialog or other new window.
+
+[call [cmd ::tktest::contextMenu] [arg coord] [opt [arg "pattern"]...]]
+Invoke a context menu by right clicking at a coordinate, invoke the menu
+and dismiss the menu. The coordinate is a two element x/y list.
+The patterns describe the menu as in [cmd ::tktest::menu].
 
 [list_end]
 
@@ -110,6 +134,8 @@ Generate a series of key events, one for each char in [arg string].
   tktest::mouse right $c
   tktest::menu "Delete"
   tktest::key Escape
+  # The above can also be done with this
+  tktest::contextMenu $c "Delete"
   # Read the text from the first Label in the window
   set t [lb]tktest::widget -class Label -pos 0 -eval "cget -text"[rb]
   # Type an A at the end of the entry
