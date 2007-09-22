@@ -6,7 +6,7 @@
 #  for the Tcl core code.
 #
 #----------------------------------------------------------------------
-# $Revision: 1.6 $
+# $Revision: 1.7 $
 #----------------------------------------------------------------------
 
 package require Tk
@@ -295,8 +295,12 @@ proc tktest::client::key {sym {mod {}}} {
 proc tktest::client::keys {string} {
     set top [CurrentTop]
     foreach char [split $string ""] {
-        # TODO: what set of chars does this work for?
-        set char [string map {" " space \n Return} $char]
+        # TODO: what set of chars should this work for?
+        set char [string map {
+            " " space
+            \n  Return
+        } $char]
+
         event generate $top <Key-$char>
     }
 }
@@ -317,4 +321,35 @@ foreach p [info procs tktest::client::*] {
             send -- $client tktest::client::%tail% $args
         }
     }]
+}
+
+#-----------------------------------------------------------------------------
+# Helpers to combine common tasks
+#-----------------------------------------------------------------------------
+
+# Perform a command and wait for a focus change in the application.
+# This is used for buttons or menus that create a dialog or other
+# new window.
+proc tktest::waitFocus {cmd args} {
+    set f [tktest::cmd focus]
+    eval \$cmd -async $args
+    update
+    after 250
+    for {set t 0} {$t < 20} {incr t} {
+        set newf [tktest::cmd focus]
+        update
+        after 100
+        if {$newf ne $f} break
+    }
+    if {$newf eq $f} {
+        return -code error "Timeout in waitFocus"
+    }
+    return
+}
+
+# Invoke a context menu at a coordinate
+proc tktest::contextMenu {coord args} {
+    tktest::mouse right $coord
+    eval tktest::menu $args
+    tktest::key Escape
 }
