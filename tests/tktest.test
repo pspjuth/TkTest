@@ -1,7 +1,7 @@
 #------------------------------------------------------------*- tcl -*-
 # Tests for TkTest                             
 #----------------------------------------------------------------------
-# $Revision: 1.4 $
+# $Revision: 1.5 $
 #----------------------------------------------------------------------
 
 package require TkTest
@@ -119,8 +119,18 @@ test tktest-6.2 keys -body {
 
     tktest::cmd focus $w
     tktest::key End
-    tktest::keys AbraKadabra
+    tktest::keys "Abra Kadabra0"
     lappend res [tktest::widget -class Label -pos 0 -eval "cget -text"]
-} -result {Copy CopyAbraKadabra}
+} -result {Copy {CopyAbra Kadabra0}}
+
+test tktest-6.3 keys -body {
+    set w [tktest::widget -class Text]
+    tktest::cmd $w delete 1.0 end
+    set res {}
+
+    tktest::cmd focus $w
+    tktest::keys "0\nx y+-"
+    lappend res [tktest::cmd $w get 1.0 end-1c]
+} -result [list "0\nx y+-"]
 
 send -async TkTestTest exit
