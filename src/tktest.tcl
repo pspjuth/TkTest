@@ -6,7 +6,7 @@
 #  for the Tcl core code.
 #
 #----------------------------------------------------------------------
-# $Revision: 1.7 $
+# $Revision: 1.8 $
 #----------------------------------------------------------------------
 
 package require Tk
@@ -299,6 +299,8 @@ proc tktest::client::keys {string} {
         set char [string map {
             " " space
             \n  Return
+            +   plus
+            -   minus
         } $char]
 
         event generate $top <Key-$char>
