@@ -28,6 +28,7 @@ label .l2 -textvariable Cbut1
 label .l3 -textvariable Cbut2
 
 entry .e -width 10 -textvariable But
+text  .t -width 10 -height 10 
 
 grid .b1 .b2 -sticky nw  -in .f1
 grid .b3 .b4 -sticky nw  -in .f1
@@ -36,6 +37,7 @@ grid .l1 -   -sticky nw  -in .f1
 grid .l2 -   -sticky nw  -in .f1
 grid .l3 -   -sticky nw  -in .f1
 grid .e  -   -sticky nwe -in .f1
+grid .t  -   -sticky nwe -in .f1
 
 menu .m
 . configure -menu .m
