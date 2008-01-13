@@ -1,3 +1,17 @@
+2008-01-13  Peter Spjuth <pspjuth@users.sourceforge.net>
+
+	* src/tktest.tcl:
+	* pkgIndex.tcl:
+	* tktest.man:
+	* Makefile:
+	Bumped revision to 0.2
+
+2007-09-22  Peter Spjuth <pspjuth@users.sourceforge.net>
+
+	* src/tktest.tcl:
+	Added support for plus/minus in keys
+	Added helpers waitFocus and contextMenu
+
 2007-03-22  Peter Spjuth <pspjuth@users.sourceforge.net>
 
 	* src/tktest.tcl:

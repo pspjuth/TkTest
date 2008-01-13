@@ -6,11 +6,11 @@
 #  for the Tcl core code.
 #
 #----------------------------------------------------------------------
-# $Revision: 1.8 $
+# $Revision: 1.9 $
 #----------------------------------------------------------------------
 
 package require Tk
-package provide TkTest 0.1.1
+package provide TkTest 0.2
 
 namespace eval tktest {
     namespace eval client {}
@@ -45,7 +45,7 @@ proc tktest::init {str} {
 # Client Procedures
 #
 # Each tktest::client::xxx procedure will be copied to the application under
-# test and thus executes in the applications interpreter.
+# test and thus executes in the application's interpreter.
 #
 # A portal to each is created as tktest::xxx, and is used within test
 # sequences.
