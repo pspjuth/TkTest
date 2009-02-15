@@ -1,0 +1,8 @@
+##nagelfar syntax tktest::widget p*
+##nagelfar syntax tktest::cmd x*
+##nagelfar syntax tktest::press x x?
+##nagelfar syntax tktest::coord x x*
+##nagelfar syntax tktest::menu x*
+##nagelfar syntax tktest::mouse x x x?
+##nagelfar syntax tktest::key x x?
+##nagelfar syntax tktest::keys x
