@@ -56,6 +56,7 @@ proc popup {x y X Y} {
     menu .popup -tearoff 0
 
     .popup add command -label "Miffo" -command "set But Miffo"
+    .popup add command -label "Maffo" -command "set But Maffo"
 
     tk_popup .popup $X $Y
 }
