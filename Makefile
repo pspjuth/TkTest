@@ -14,9 +14,9 @@ all: doc
 # Documentation
 #----------------------------------------------------------------
 
-doc : tktest.html tktest.n
+doc : doc/tktest.html doc/tktest.n
 
-tktest.html tktest.n : tktest.man mkdoc.tcl
+doc/tktest.html doc/tktest.n : doc/tktest.man mkdoc.tcl
 	mkdoc.tcl
 
 
@@ -71,4 +71,4 @@ ccclean:
 
 release: doc
 	tar -zcf tktest$(VERSION).tar.gz $(SRCFILES) pkgIndex.tcl \
-		tktest.html tktest.n tktest.man
+		doc/tktest.html doc/tktest.n doc/tktest.man

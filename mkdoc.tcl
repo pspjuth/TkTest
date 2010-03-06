@@ -12,7 +12,7 @@ proc write_out {f text} {
 
 package require doctools
 foreach {format ext} {nroff n html html} {
-    ::doctools::new dt -format $format -module tktest -file tktest.man
-    write_out tktest.$ext [dt format [get_input tktest.man]]
+    ::doctools::new dt -format $format -module tktest -file doc/tktest.man
+    write_out doc/tktest.$ext [dt format [get_input doc/tktest.man]]
     dt destroy
 }
