@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file 'tktest.man' by tcllib/doctools with format 'nroff'
+'\" Generated from file 'doc/tktest.man' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2007 Peter Spjuth
 '\"
 .so man.macros
