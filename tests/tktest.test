@@ -1,7 +1,7 @@
 #------------------------------------------------------------*- tcl -*-
 # Tests for TkTest                             
 #----------------------------------------------------------------------
-# $Revision: 1.6 $
+# $Revision: 1.7 $
 #----------------------------------------------------------------------
 
 package require TkTest
@@ -81,7 +81,7 @@ test tktest-5.1 mouse -body {
     set res {}
     tktest::mouse left [tktest::coord $lb bbox 1]
     lappend res [tktest::cmd $lb curselection]
-    tktest::mouse left [tktest::coord $lb bbox 3]
+    tktest::mouse 1    [tktest::coord $lb bbox 3]
     lappend res [tktest::cmd $lb curselection]
 } -result {1 3}
 

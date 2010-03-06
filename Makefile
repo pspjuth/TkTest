@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------
 # Make file for TkTest
 #----------------------------------------------------------------------
-# $Revision: 1.5 $
+# $Revision: 1.6 $
 #----------------------------------------------------------------------
 
 VERSION = 02
@@ -50,7 +50,7 @@ instrument: $(IFILES)
 	@rm -f $(LOGFILES)
 
 # Run tests to create log file.
-testcover $(LOGFILES): $(IFILES)
+testcover $(LOGFILES): $(IFILES) tests/tktest.test
 	@./tests/all.tcl_i $(TESTFLAGS)
 
 # Create markup file for better view of result

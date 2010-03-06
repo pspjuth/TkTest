@@ -1,0 +1,160 @@
+'\"
+'\" Generated from file 'tktest.man' by tcllib/doctools with format 'nroff'
+'\" Copyright (c) 2007 Peter Spjuth
+'\"
+.so man.macros
+.TH "tktest" n 0.2 tktest "Test Tcl/Tk applications"
+.BS
+.SH NAME
+tktest \- Test Tcl/Tk applications
+.SH SYNOPSIS
+package require \fBTk \fR
+.sp
+package require \fBtktest  ?0.2?\fR
+.sp
+\fB::tktest::init\fR \fIappName\fR
+.sp
+\fB::tktest::widget\fR ?\fIoption value\fR...?
+.sp
+\fB::tktest::cmd\fR \fIcommand\fR ?\fIarg\fR...?
+.sp
+\fB::tktest::press\fR \fItext\fR ?\fIpos\fR?
+.sp
+\fB::tktest::coord\fR \fIwidget\fR ?\fIcommand\fR \fIarg\fR...?
+.sp
+\fB::tktest::menu\fR ?\fIpattern\fR...?
+.sp
+\fB::tktest::mouse\fR \fIbutton\fR \fIx\fR ?\fIy\fR?
+.sp
+\fB::tktest::key\fR \fIsymbol\fR ?\fImodifier\fR?
+.sp
+\fB::tktest::keys\fR \fIstring\fR
+.sp
+\fB::tktest::waitFocus\fR \fIcmd\fR ?\fIarg\fR...?
+.sp
+\fB::tktest::contextMenu\fR \fIcoord\fR ?\fIpattern\fR...?
+.sp
+.BE
+.SH DESCRIPTION
+This package provides helpers for testing Tcl/Tk GUIs.
+.PP
+The mechanism for testing is the \fBsend\fR command, so the environment
+and the application to be tested must allow \fBsend\fR.
+All client commands take the optional argument \fI-async\fR,
+which causes it to use the asynchronous version of \fBsend\fR.
+.SH "PUBLIC API"
+.TP
+\fB::tktest::init\fR \fIappName\fR
+This command initializes the tktest package to test an application.
+.sp
+The \fIappName\fR must identify the application to be tested in a way
+that works with \fBsend\fR.
+.sp
+If the application is restarted, \fB::tktest::init\fR must be called
+again to redo the initializatons needed in the application.
+After \fB::tktest::init\fR has been called, all other commands
+will go to that application.
+.PP
+.SS "CLIENT COMMANDS"
+.TP
+\fB::tktest::widget\fR ?\fIoption value\fR...?
+Locate a widget in the application.
+.RS
+.TP
+\fB-class\fR \fIpattern\fR
+The widget's class must match \fIpattern\fR.
+.TP
+\fB-text\fR \fIpattern\fR
+The widget's text or label must match \fIpattern\fR.
+.TP
+\fB-pos\fR \fInumber\fR
+If more than one widget is eligible, they are numbered left-right top-down.
+A number must then be given to identify which is meant.
+.TP
+\fB-eval\fR \fItail\fR
+If \fB-eval\fR is given, a command is evaluated on the widget and the
+result is returned instead of the widget name. The command evaluated
+is [uplevel e#0 $widget $tail].
+.RE
+.TP
+\fB::tktest::cmd\fR \fIcommand\fR ?\fIarg\fR...?
+Execute a command within the client.
+.TP
+\fB::tktest::press\fR \fItext\fR ?\fIpos\fR?
+Press a button.  The button is identified by \fItext\fR and \fIpos\fR,
+which are equivalent to \fB::tktest::widget\fR's \fB-text\fR and
+\fB-pos\fR.
+Any widget with an invoke command can be used.
+.TP
+\fB::tktest::coord\fR \fIwidget\fR ?\fIcommand\fR \fIarg\fR...?
+Find coordinates for a widget.
+If no extra arguments are given, the center of the widget is returned as a list of x/y, relative to the widget's toplevel.
+Any extra arguments are called as a subcommand on the widget
+to ask for a coordinate or bounding box.
+A coordinate is returned as is.  A bounding box is assumed to be relative to
+the widget and the center of the box is returned, relative to the widget's toplevel.
+.TP
+\fB::tktest::menu\fR ?\fIpattern\fR...?
+Invoke a menu.
+Each argument is a glob pattern describing a menu element's label.
+All entries but the last should be cascades.
+.TP
+\fB::tktest::mouse\fR \fIbutton\fR \fIx\fR ?\fIy\fR?
+Mouse click at a coordinate.
+The mouse button is selected by \fIbutton\fR which is either a number, "left"
+or "right". If \fIy\fR is not given, \fIx\fR may be a two element list.
+Coordinates are relative to current toplevel.
+.TP
+\fB::tktest::key\fR \fIsymbol\fR ?\fImodifier\fR?
+Generate a key event.
+.TP
+\fB::tktest::keys\fR \fIstring\fR
+Generate a series of key events, one for each char in \fIstring\fR.
+Currently all alphanumeric chars, space and newline are supported.
+.PP
+.SS "HELPER COMMANDS"
+.TP
+\fB::tktest::waitFocus\fR \fIcmd\fR ?\fIarg\fR...?
+Execute a client command and wait for a focus change in the application.
+This is used for buttons or menus that create a dialog or other new window.
+.TP
+\fB::tktest::contextMenu\fR \fIcoord\fR ?\fIpattern\fR...?
+Invoke a context menu by right clicking at a coordinate, invoke the menu
+and dismiss the menu. The coordinate is a two element x/y list.
+The patterns describe the menu as in \fB::tktest::menu\fR.
+.PP
+.SH EXAMPLES
+.nf
+
+  tktest::init MyApp
+  # Press button labeled "Run"
+  tktest::press Run
+  # Select Menu entry "Exit" in menu "File"
+  tktest::menu File Exit
+  # Right click mouse over the listbox's second element and select
+  # the Delete entry from the popup menu.
+  set w [tktest::widget -class Listbox]
+  set c [tktest::coord $w bbox 1]
+  tktest::mouse right $c
+  tktest::menu "Delete"
+  tktest::key Escape
+  # The above can also be done with this
+  tktest::contextMenu $c "Delete"
+  # Read the text from the first Label in the window
+  set t [tktest::widget -class Label -pos 0 -eval "cget -text"]
+  # Type an A at the end of the entry
+  tktest::cmd focus [tktest::widget -class Entry]
+  tktest::key End
+  tktest::key A
+
+
+.fi
+.SH "SEE ALSO"
+tcltest
+.SH KEYWORDS
+gui, testing
+.SH COPYRIGHT
+.nf
+Copyright (c) 2007 Peter Spjuth
+
+.fi
