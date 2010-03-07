@@ -1,0 +1,2 @@
+TkTest is a set of helpers to drive a Tk GUI in an automated way
+for testing.  It uses send to connect to and control the applicaion.
