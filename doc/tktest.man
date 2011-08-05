@@ -1,6 +1,6 @@
 [comment {-*- tcl -*- doctools manpage}]
 [manpage_begin tktest n 0.2]
-[copyright {2007 Peter Spjuth}]
+[copyright {2007-2008 Peter Spjuth}]
 [moddesc   {Test Tcl/Tk applications}]
 [titledesc {Test Tcl/Tk applications}]
 [require Tk]
